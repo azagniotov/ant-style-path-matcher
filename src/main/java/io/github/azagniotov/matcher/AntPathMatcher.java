@@ -39,17 +39,16 @@ public class AntPathMatcher {
     public boolean isMatch(final String pattern, final String path) {
         if (pattern.isEmpty()) {
             return path.isEmpty();
-        } else if (pattern.length() == 1 && pattern.charAt(0) == ASTERISK) {
-            return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
-        } else if (path.isEmpty()) {
-            if (pattern.charAt(0) == pathSeparator) {
-                return matchStart || doubleAsteriskMatch(pattern.substring(1), path);
-            }
+        } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
+            return matchStart || doubleAsteriskMatch(pattern.substring(1), path);
         }
 
         final char patternStart = pattern.charAt(0);
         if (patternStart == ASTERISK) {
-            if (doubleAsteriskMatch(pattern, path)) {
+
+            if (pattern.length() == 1) {
+                return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
+            } else if (doubleAsteriskMatch(pattern, path)) {
                 return true;
             }
 

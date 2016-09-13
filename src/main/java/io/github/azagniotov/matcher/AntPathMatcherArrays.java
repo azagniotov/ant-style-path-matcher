@@ -45,18 +45,16 @@ public class AntPathMatcherArrays {
     private boolean isMatch(final char[] pattern, final int patternPointer, final char[] path, final int pathPointer) {
         if (empty(pattern, patternPointer)) {
             return empty(path, pathPointer);
-        } else if (lengthOf(pattern, 1, patternPointer) && pattern[patternPointer] == ASTERISK) {
-            return empty(path, pathPointer) || path[pathPointer] != pathSeparator && isMatch(pattern, patternPointer, path, pathPointer + 1);
-        } else if (empty(path, pathPointer)) {
-            if (pattern[patternPointer] == pathSeparator) {
-                return matchStart || doubleAsteriskMatch(pattern, patternPointer + 1, path, pathPointer);
-            }
+        } else if (empty(path, pathPointer) && pattern[patternPointer] == pathSeparator) {
+            return matchStart || doubleAsteriskMatch(pattern, patternPointer + 1, path, pathPointer);
         }
 
         final char patternStart = pattern[patternPointer];
         if (patternStart == ASTERISK) {
 
-            if (doubleAsteriskMatch(pattern, patternPointer, path, pathPointer)) {
+            if (lengthOf(pattern, 1, patternPointer)) {
+                return empty(path, pathPointer) || path[pathPointer] != pathSeparator && isMatch(pattern, patternPointer, path, pathPointer + 1);
+            } else if (doubleAsteriskMatch(pattern, patternPointer, path, pathPointer)) {
                 return true;
             }
 

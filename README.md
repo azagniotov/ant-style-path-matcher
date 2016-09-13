@@ -1,5 +1,9 @@
 # Ant-style Path Matcher
-Consise, recursive  & efficient path matcher implementation for an Ant-style path pattern matching algorithm
+Consise, recursive  & efficient path matcher implementation for an Ant-style path pattern matching algorithm. There are two
+implementations available:
+
+1. [AntPathMatcher](../master/src/main/java/io/github/azagniotov/matcher/AntPathMatcher.java)
+2. [AntPathMatcherArrays](../master/src/main/java/io/github/azagniotov/matcher/AntPathMatcherArrays.java) that does not create substrings during matching
 
 The matcher matches URLs using the following rules:
 * `?` matches one character

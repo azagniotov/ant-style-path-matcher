@@ -21,7 +21,8 @@ public class AntPathMatcher {
 
     private static final char ASTERISK = '*';
     private static final char QUESTION = '?';
-    private static final int ASCII_CASE_DIFFERENCE = 32;
+    private static final char BLANK = ' ';
+    private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
 
     private final char pathSeparator;
     private final boolean ignoreCase;
@@ -62,23 +63,28 @@ public class AntPathMatcher {
             return isMatch(pattern.substring(1), path.substring(start));
         }
 
-        int pointer = 0;
-        if (trimTokens) {
-            while (!path.isEmpty() && pointer < path.length() && path.charAt(pointer) == ' ') {
-                pointer++;
-            }
-        }
+        int pointer = skipBlanks(path);
 
         return !path.isEmpty() && (equal(path.charAt(pointer), patternStart) || patternStart == QUESTION)
                 && isMatch(pattern.substring(1), path.substring(pointer + 1));
+    }
+
+    private int skipBlanks(final String path) {
+        int pointer = 0;
+        if (trimTokens) {
+            while (!path.isEmpty() && pointer < path.length() && path.charAt(pointer) == BLANK) {
+                pointer++;
+            }
+        }
+        return pointer;
     }
 
     private boolean equal(final char pathChar, final char patternChar) {
         if (ignoreCase) {
             return pathChar == patternChar ||
                     ((pathChar > patternChar) ?
-                            pathChar == patternChar + ASCII_CASE_DIFFERENCE :
-                            pathChar == patternChar - ASCII_CASE_DIFFERENCE);
+                            pathChar == patternChar + ASCII_CASE_DIFFERENCE_VALUE :
+                            pathChar == patternChar - ASCII_CASE_DIFFERENCE_VALUE);
         }
         return pathChar == patternChar;
     }
@@ -96,7 +102,6 @@ public class AntPathMatcher {
         }
         return (isMatch(pattern.substring(2), path.substring(pointer)) ||
                 (pointer < path.length() && doubleAsteriskMatch(pattern, path.substring(pointer + 1))));
-
     }
 
     public static final class Builder {
@@ -129,7 +134,6 @@ public class AntPathMatcher {
             this.trimTokens = true;
             return this;
         }
-
 
         public AntPathMatcher build() {
             return new AntPathMatcher(pathSeparator, ignoreCase, matchStart, trimTokens);

@@ -7,7 +7,8 @@ The matcher matches URLs using the following rules:
 * `**` matches zero or more **_directories_** in a path
 
 #### _Complexity_
-The matching algorithm uses a `O(N)` space complexity, since the algorithm does not create substrings and recurses by moving pointers on the original char arrays
+The matching algorithm of [AntPathMatcherArrays](../master/src/main/java/io/github/azagniotov/matcher/AntPathMatcherArrays.java) uses a `O(N)` space complexity, since the algorithm does not create
+substrings (unlike [AntPathMatcher](../master/src/main/java/io/github/azagniotov/matcher/AntPathMatcher.java)) and recurses by moving pointers on the original char arrays
 
 #### _Examples_
 
@@ -26,7 +27,7 @@ The instances of this path matcher can be configured via its `Builder` to:
 4. Specify whether to trim tokenized paths. The default is `false` - do not trim
 
 #### _Testing_
-The matcher has been thoroughly tested. The unit test cases have been kindly borrowed from Spring's `AntPathMatcherTests` in order to achieve matcher behaviour parity, you can refer to [AntPathMatcherTest](../master/src/test/java/io/github/azagniotov/matcher/AntPathMatcherTest.java)
+The matcher has been thoroughly tested. The unit test cases have been kindly borrowed from Spring's `AntPathMatcherTests` in order to achieve matcher behaviour parity, you can refer to [AntPathMatcherTest](../master/src/test/java/io/github/azagniotov/matcher/AntPathMatcherTest.java) to view the test cases
 
 #### _Credits_
 * Part of this README description has been kindly borrowed from Spring's `AntPathMatcher`

@@ -10,7 +10,8 @@ package io.github.azagniotov.matcher;
  * The instances of this class can be configured via its {@link Builder} to:
  * (1) Use a custom path separator. The default is '/' character
  * (2) Ignore character case during comparison. The default is case-sensitive
- * (3) To match the full path against the start of the pattern (match start). The default is full match
+ * (3) Match start. Determines whether the pattern at least matches as far as the given base path goes,
+ * assuming that a full path may then match as well. The default is a full match
  * <p/>
  * The custom path separator & ignoring character case options were inspired by Spring's AntPathMatcher
  */

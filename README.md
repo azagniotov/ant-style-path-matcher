@@ -28,7 +28,9 @@ The instances of this path matcher can be configured via its `Builder` to:
 #### _Testing_
 The matcher has been thoroughly tested. The unit test cases have been kindly borrowed from Spring's `AntPathMatcherTests` in order to achieve matcher behaviour parity, you can refer to [AntPathMatcherTest](../master/src/test/java/io/github/azagniotov/matcher/AntPathMatcherTest.java)
 
-##### Credits
+#### _Credits_
 * Part of this README description has been kindly borrowed from Spring's `AntPathMatcher`
 * The path matcher configuration options have been inspired by Spring's `AntPathMatcher`
 
+#### _License_
+MIT

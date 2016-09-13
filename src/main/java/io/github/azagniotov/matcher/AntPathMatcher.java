@@ -10,6 +10,7 @@ package io.github.azagniotov.matcher;
  * The instances of this class can be configured via its {@link Builder} to:
  * (1) Use a custom path separator. The default is '/' character
  * (2) Ignore character case during comparison. The default is case-sensitive
+ * (3) To match the full path against the start of the pattern (match start). The default is full match
  * <p/>
  * The custom path separator & ignoring character case options were inspired by Spring's AntPathMatcher
  */
@@ -22,19 +23,23 @@ public class AntPathMatcher {
 
     private final char pathSeparator;
     private final boolean ignoreCase;
+    private final boolean matchStart;
 
-    private AntPathMatcher(final char pathSeparator, boolean ignoreCase) {
+    private AntPathMatcher(final char pathSeparator, boolean ignoreCase, boolean matchStart) {
         this.pathSeparator = pathSeparator;
         this.ignoreCase = ignoreCase;
+        this.matchStart = matchStart;
     }
 
-    public boolean match(final String pattern, final String path) {
+    public boolean isMatch(final String pattern, final String path) {
         if (pattern.isEmpty()) {
             return path.isEmpty();
         } else if (pattern.length() == 1 && pattern.charAt(0) == ASTERISK) {
-            return path.isEmpty() || path.charAt(0) != pathSeparator && match(pattern, path.substring(1));
-        } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
-            return doubleAsteriskMatch(pattern.substring(1), path);
+            return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
+        } else if (path.isEmpty()) {
+            if (pattern.charAt(0) == pathSeparator) {
+                return matchStart || doubleAsteriskMatch(pattern.substring(1), path);
+            }
         }
 
         final char patternStart = pattern.charAt(0);
@@ -45,16 +50,16 @@ public class AntPathMatcher {
 
             int start = 0;
             while (start < path.length()) {
-                if (match(pattern.substring(1), path.substring(start))) {
+                if (isMatch(pattern.substring(1), path.substring(start))) {
                     return true;
                 }
                 start++;
             }
-            return match(pattern.substring(1), path.substring(start));
+            return isMatch(pattern.substring(1), path.substring(start));
         }
 
         return !path.isEmpty() && (equal(path.charAt(0), patternStart) || patternStart == QUESTION)
-                && match(pattern.substring(1), path.substring(1));
+                && isMatch(pattern.substring(1), path.substring(1));
     }
 
     private boolean equal(final char pathChar, final char patternChar) {
@@ -70,7 +75,7 @@ public class AntPathMatcher {
     private boolean doubleAsteriskMatch(final String pattern, final String path) {
         if (pattern.length() == 1 || pattern.charAt(1) != ASTERISK) {
             return false;
-        } else if (pattern.length() == 2 || match(pattern.substring(3), path)) {
+        } else if (pattern.length() == 2 || isMatch(pattern.substring(3), path)) {
             return true;
         }
 
@@ -78,7 +83,7 @@ public class AntPathMatcher {
         while (pointer < path.length() && (path.charAt(pointer) != pathSeparator)) {
             pointer++;
         }
-        return (match(pattern.substring(2), path.substring(pointer)) ||
+        return (isMatch(pattern.substring(2), path.substring(pointer)) ||
                 (pointer < path.length() && doubleAsteriskMatch(pattern, path.substring(pointer + 1))));
 
     }
@@ -87,6 +92,7 @@ public class AntPathMatcher {
 
         private char pathSeparator = '/';
         private boolean ignoreCase = false;
+        private boolean matchStart = false;
 
         public Builder() {
 
@@ -102,8 +108,13 @@ public class AntPathMatcher {
             return this;
         }
 
+        public Builder withMatchStart() {
+            this.matchStart = true;
+            return this;
+        }
+
         public AntPathMatcher build() {
-            return new AntPathMatcher(pathSeparator, ignoreCase);
+            return new AntPathMatcher(pathSeparator, ignoreCase, matchStart);
         }
     }
 }

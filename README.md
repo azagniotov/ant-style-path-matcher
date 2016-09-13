@@ -1,7 +1,5 @@
-# Ant Path Matcher
-PathMatcher implementation for Ant-style path patterns
-
-Part of this README description has been kindly borrowed from http://docs.spring.io/.
+# Ant-style Path Matcher
+Consise & efficient path matcher implementation for Ant-style path patterns
 
 The mapping matches URLs using the following rules:
 * `?` matches one character
@@ -17,3 +15,7 @@ The mapping matches URLs using the following rules:
 * `org/**/servlet/bla.jsp` - matches `org/springframework/servlet/bla.jsp` but also `org/springframework/testing/servlet/bla.jsp` and `org/servlet/bla.jsp`
 
 **Note**: a pattern and a path must both be absolute or must both be relative in order for the two to match. Therefore it is recommended that users of this implementation to sanitize patterns in order to prefix them with `/` as it makes sense in the context in which they're used.
+
+##### Credits
+* Part of this README description has been kindly borrowed from http://docs.spring.io/.
+* Path matcher configuration options have inspired by Spring's `AntPathMatcher`

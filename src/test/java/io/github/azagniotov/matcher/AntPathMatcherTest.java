@@ -114,6 +114,12 @@ public class AntPathMatcherTest {
         assertTrue(pathMatcher.isMatch("org/**/servlet/bla.jsp", "org/springframework/servlet/bla.jsp"));
         assertTrue(pathMatcher.isMatch("org/**/servlet/bla.jsp", "org/springframework/testing/servlet/bla.jsp"));
         assertTrue(pathMatcher.isMatch("org/**/servlet/bla.jsp", "org/servlet/bla.jsp"));
+
+        assertFalse(pathMatcher.isMatch("/foo/bar/**", "/foo /bar"));
+        assertFalse(pathMatcher.isMatch("/foo/bar/**", "/foo          /bar"));
+        assertFalse(pathMatcher.isMatch("/foo/bar/**", "/foo          /               bar"));
+        assertFalse(pathMatcher.isMatch("/foo/bar/**", "       /      foo          /               bar"));
+        assertFalse(pathMatcher.isMatch("org/**/servlet/bla.jsp", "   org   /      servlet    /   bla   .   jsp"));
     }
 
     @Test
@@ -278,5 +284,38 @@ public class AntPathMatcherTest {
         assertTrue(pathMatcher.isMatch("/x/x/**/bla", "/x/x/x/"));
 
         assertTrue(pathMatcher.isMatch("", ""));
+    }
+
+    @Test
+    public void isMatchWithTrimTokens() {
+        final AntPathMatcher pathMatcher = new AntPathMatcher.Builder().withTrimTokens().build();
+
+        assertTrue(pathMatcher.isMatch("/foo/bar/**", "/foo /bar"));
+        assertTrue(pathMatcher.isMatch("/foo/bar/**", "/foo          /bar"));
+        assertTrue(pathMatcher.isMatch("/foo/bar/**", "/foo          /               bar"));
+        assertTrue(pathMatcher.isMatch("/foo/bar/**", "       /      foo          /               bar"));
+        assertTrue(pathMatcher.isMatch("/**/*", "/      testing     /     testing   "));
+        assertTrue(pathMatcher.isMatch("org/**/servlet/bla.jsp", "   org   /      servlet    /   bla   .   jsp"));
+    }
+
+    @Test
+    public void isMatchWithIgnoreCaseWithCustomPathSeparatorWithTrimTokens() throws Exception {
+        final AntPathMatcher pathMatcher = new AntPathMatcher.Builder()
+                .withIgnoreCase()
+                .withTrimTokens()
+                .withPathSeparator('.').build();
+
+        assertTrue(pathMatcher.isMatch(".foo.bar.**", ".FoO.baR"));
+        assertTrue(pathMatcher.isMatch("org.springframework.**.*.jsp", "ORG.  SpringFramework.web.views.hello . JSP"));
+        assertTrue(pathMatcher.isMatch("org.**.servlet.bla.jsp", "Org        .SERVLET     .     bla.jsp"));
+        assertTrue(pathMatcher.isMatch(".?", ".       A"));
+        assertTrue(pathMatcher.isMatch(".?.a", ".a.A"));
+        assertTrue(pathMatcher.isMatch(".a.??", ".       a      .     B       b"));
+        assertTrue(pathMatcher.isMatch(".?", ".a"));
+        assertTrue(pathMatcher.isMatch(".**", ".testing       .   teSting"));
+        assertTrue(pathMatcher.isMatch(".*.**", ".testing.testing"));
+        assertTrue(pathMatcher.isMatch(".**.*", "    .         tEsting .    testinG"));
+        assertTrue(pathMatcher.isMatch("http:..example.org", " H t T p : . . exAmple . org"));
+        assertTrue(pathMatcher.isMatch("HTTP:..EXAMPLE.ORG", "HtTp:..exAmple.org"));
     }
 }

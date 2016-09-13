@@ -9,10 +9,11 @@ package io.github.azagniotov.matcher;
  * <p/>
  * The instances of this class can be configured via its {@link Builder} to:
  * (1) Use a custom path separator. The default is '/' character
- * (2) Ignore character case during comparison. The default is case-sensitive
+ * (2) Ignore character case during comparison. The default is {@code false}
  * (3) Match start. Determines whether the pattern at least matches as far as the given base path goes,
- * assuming that a full path may then match as well. The default is a full match
+ * assuming that a full path may then match as well. The default is {@code false}
  * <p/>
+ * (4) Specify whether to trim tokenized paths. The default is {@code false}
  * The custom path separator & ignoring character case options were inspired by Spring's AntPathMatcher
  */
 @SuppressWarnings("WeakerAccess")
@@ -25,11 +26,13 @@ public class AntPathMatcher {
     private final char pathSeparator;
     private final boolean ignoreCase;
     private final boolean matchStart;
+    private final boolean trimTokens;
 
-    private AntPathMatcher(final char pathSeparator, boolean ignoreCase, boolean matchStart) {
+    private AntPathMatcher(final char pathSeparator, boolean ignoreCase, boolean matchStart, boolean trimTokens) {
         this.pathSeparator = pathSeparator;
         this.ignoreCase = ignoreCase;
         this.matchStart = matchStart;
+        this.trimTokens = trimTokens;
     }
 
     public boolean isMatch(final String pattern, final String path) {
@@ -59,8 +62,15 @@ public class AntPathMatcher {
             return isMatch(pattern.substring(1), path.substring(start));
         }
 
-        return !path.isEmpty() && (equal(path.charAt(0), patternStart) || patternStart == QUESTION)
-                && isMatch(pattern.substring(1), path.substring(1));
+        int pointer = 0;
+        if (trimTokens) {
+            while (!path.isEmpty() && pointer < path.length() && path.charAt(pointer) == ' ') {
+                pointer++;
+            }
+        }
+
+        return !path.isEmpty() && (equal(path.charAt(pointer), patternStart) || patternStart == QUESTION)
+                && isMatch(pattern.substring(1), path.substring(pointer + 1));
     }
 
     private boolean equal(final char pathChar, final char patternChar) {
@@ -94,6 +104,7 @@ public class AntPathMatcher {
         private char pathSeparator = '/';
         private boolean ignoreCase = false;
         private boolean matchStart = false;
+        private boolean trimTokens = false;
 
         public Builder() {
 
@@ -114,8 +125,14 @@ public class AntPathMatcher {
             return this;
         }
 
+        public Builder withTrimTokens() {
+            this.trimTokens = true;
+            return this;
+        }
+
+
         public AntPathMatcher build() {
-            return new AntPathMatcher(pathSeparator, ignoreCase, matchStart);
+            return new AntPathMatcher(pathSeparator, ignoreCase, matchStart, trimTokens);
         }
     }
 }

@@ -114,6 +114,8 @@ public class AntPathMatcherArraysTest {
         assertTrue(pathMatcher.isMatch("org/**/servlet/bla.jsp", "org/springframework/servlet/bla.jsp"));
         assertTrue(pathMatcher.isMatch("org/**/servlet/bla.jsp", "org/springframework/testing/servlet/bla.jsp"));
         assertTrue(pathMatcher.isMatch("org/**/servlet/bla.jsp", "org/servlet/bla.jsp"));
+        assertTrue(pathMatcher.isMatch("**/hello.jsp", "org/springframework/servlet/web/views/hello.jsp"));
+        assertTrue(pathMatcher.isMatch("**/**/hello.jsp", "org/springframework/servlet/web/views/hello.jsp"));
 
         assertFalse(pathMatcher.isMatch("/foo/bar/**", "/foo /bar"));
         assertFalse(pathMatcher.isMatch("/foo/bar/**", "/foo          /bar"));

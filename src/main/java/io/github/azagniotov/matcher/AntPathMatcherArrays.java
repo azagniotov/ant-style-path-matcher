@@ -46,7 +46,12 @@ public class AntPathMatcherArrays {
         if (empty(pattern, patternPointer)) {
             return empty(path, pathPointer);
         } else if (empty(path, pathPointer) && pattern[patternPointer] == pathSeparator) {
-            return matchStart || doubleAsteriskMatch(pattern, patternPointer + 1, path, pathPointer);
+            if (matchStart) {
+                return true;
+            } else if (lengthOf(pattern, 2, patternPointer) && pattern[patternPointer + 1] == ASTERISK) {
+                return false;
+            }
+            return isMatch(pattern, patternPointer + 1, path, pathPointer);
         }
 
         final char patternStart = pattern[patternPointer];
@@ -75,6 +80,16 @@ public class AntPathMatcherArrays {
                 && isMatch(pattern, patternPointer + 1, path, pointer + 1);
     }
 
+    private boolean doubleAsteriskMatch(final char[] pattern, final int patternPointer, final char[] path, final int pathPointer) {
+        if (pattern[patternPointer + 1] != ASTERISK) {
+            return false;
+        } else if (pattern.length - patternPointer > 2) {
+            return isMatch(pattern, patternPointer + 3, path, pathPointer);
+        }
+
+        return false;
+    }
+
     private int skipBlanks(final char[] path, final int pathPointer) {
         int pointer = pathPointer;
         if (trimTokens) {
@@ -93,22 +108,6 @@ public class AntPathMatcherArrays {
                             pathChar == patternChar - ASCII_CASE_DIFFERENCE_VALUE);
         }
         return pathChar == patternChar;
-    }
-
-    private boolean doubleAsteriskMatch(final char[] pattern, final int patternPointer, final char[] path, final int pathPointer) {
-        if (lengthOf(pattern, 1, patternPointer) || pattern[patternPointer + 1] != ASTERISK) {
-            return false;
-        } else if (lengthOf(pattern, 2, patternPointer) || isMatch(pattern, patternPointer + 3, path, pathPointer)) {
-            return true;
-        }
-
-        int newPathPointer = pathPointer;
-        while (newPathPointer < path.length && (path[newPathPointer] != pathSeparator)) {
-            newPathPointer++;
-        }
-
-        return (isMatch(pattern, patternPointer + 2, path, newPathPointer) ||
-                (newPathPointer < path.length && doubleAsteriskMatch(pattern, patternPointer, path, newPathPointer + 1)));
     }
 
     private boolean empty(final char[] characters, final int pointer) {

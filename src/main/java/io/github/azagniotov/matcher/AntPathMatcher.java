@@ -40,7 +40,12 @@ public class AntPathMatcher {
         if (pattern.isEmpty()) {
             return path.isEmpty();
         } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
-            return matchStart || doubleAsteriskMatch(pattern.substring(1), path);
+            if (matchStart) {
+                return true;
+            } else if (pattern.length() == 2 && pattern.charAt(1) == ASTERISK) {
+                return false;
+            }
+            return isMatch(pattern.substring(1), path);
         }
 
         final char patternStart = pattern.charAt(0);
@@ -68,6 +73,16 @@ public class AntPathMatcher {
                 && isMatch(pattern.substring(1), path.substring(pointer + 1));
     }
 
+    private boolean doubleAsteriskMatch(final String pattern, final String path) {
+        if (pattern.charAt(1) != ASTERISK) {
+            return false;
+        } else if (pattern.length() > 2) {
+            return isMatch(pattern.substring(3), path);
+        }
+
+        return false;
+    }
+
     private int skipBlanks(final String path) {
         int pointer = 0;
         if (trimTokens) {
@@ -86,21 +101,6 @@ public class AntPathMatcher {
                             pathChar == patternChar - ASCII_CASE_DIFFERENCE_VALUE);
         }
         return pathChar == patternChar;
-    }
-
-    private boolean doubleAsteriskMatch(final String pattern, final String path) {
-        if (pattern.length() == 1 || pattern.charAt(1) != ASTERISK) {
-            return false;
-        } else if (pattern.length() == 2 || isMatch(pattern.substring(3), path)) {
-            return true;
-        }
-
-        int pointer = 0;
-        while (pointer < path.length() && (path.charAt(pointer) != pathSeparator)) {
-            pointer++;
-        }
-        return (isMatch(pattern.substring(2), path.substring(pointer)) ||
-                (pointer < path.length() && doubleAsteriskMatch(pattern, path.substring(pointer + 1))));
     }
 
     public static final class Builder {

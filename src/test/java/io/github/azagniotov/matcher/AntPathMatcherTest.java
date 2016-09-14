@@ -139,6 +139,8 @@ public class AntPathMatcherTest {
         assertTrue(pathMatcher.isMatch("org.**.servlet.bla.jsp", "org.springframework.testing.servlet.bla.jsp"));
         assertTrue(pathMatcher.isMatch("org.**.servlet.bla.jsp", "org.servlet.bla.jsp"));
         assertTrue(pathMatcher.isMatch("http://example.org", "http://example.org"));
+        assertTrue(pathMatcher.isMatch("**.hello.jsp", "org.springframework.servlet.web.views.hello.jsp"));
+        assertTrue(pathMatcher.isMatch("**.**.hello.jsp", "org.springframework.servlet.web.views.hello.jsp"));
 
         // test matching with ?'s and .'s
         assertTrue(pathMatcher.isMatch(".?", ".a"));

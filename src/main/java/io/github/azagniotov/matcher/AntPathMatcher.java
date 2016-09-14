@@ -83,6 +83,25 @@ public class AntPathMatcher {
         return false;
     }
 
+    /*
+     private boolean doubleAsteriskMatch(final String pattern, final String path) {
+        if (pattern.charAt(1) != ASTERISK) {
+            return false;
+        } else if (pattern.length() > 2 && isMatch(pattern.substring(3), path)) {
+            return true;
+        }
+
+        int pointer = 0;
+        for (int idx = 0; idx < path.length(); idx++) {
+            if (path.charAt(idx) == pathSeparator) {
+                pointer = idx;
+                break;
+            }
+        }
+        return isMatch(pattern.substring(2), path.substring(pointer));
+    }
+     */
+
     private int skipBlanks(final String path) {
         int pointer = 0;
         if (trimTokens) {

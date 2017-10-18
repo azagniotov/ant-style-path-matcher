@@ -10,6 +10,20 @@ The matcher matches URLs using the following rules:
 * `*` matches zero or more characters
 * `**` matches zero or more **_directories_** in a path
 
+### _Dependencies_
+
+#### Gradle
+
+```
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile("io.github.azagniotov:ant-style-path-matcher:1.0.0")
+}
+```
+
 ### _Examples_
 
 * `com/t?st.jsp` - matches `com/test.jsp` but also `com/tast.jsp` or `com/txst.jsp`
